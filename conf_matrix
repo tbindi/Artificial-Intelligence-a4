@@ -1,0 +1,13 @@
+def compute_confmatrix(tagged_docs):
+    TP,TN,FP,FN = 0,0,0,0
+    for i in tagged_docs:
+        if i[0]==1 and i[1] ==1:
+            TP += 1
+        if i[0]==1 and i[1] ==0:
+            FN += 1
+        if i[0]==0 and i[1] ==0:
+            TN += 1
+        if i[0]==0 and i[1] ==1:
+            FP += 1
+    confmatrix = [[TN,FP],[FN,TP]]
+    return confmatrix
