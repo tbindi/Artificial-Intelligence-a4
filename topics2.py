@@ -9,47 +9,26 @@ import math
 
 temp = []
 
-def cleanhtml(raw_html):
-  cleanr = re.compile('<.*?>')
-  cleantext = re.sub(cleanr, '', raw_html)
-  return cleantext
 
-def preprocess_data(i):
-    temp[:] = []
-    f = open(i, 'r')
-    x = f.read()
-    # x = f.read()
-    f.close()
-    x = cleanhtml(x)
-    x = x.split()
-
-
-    for i in x:
-        temp.append(re.findall(r"\b\w+\b",i))
-
-    data = [item for sublist in temp for item in sublist]
-
-    data = [word.lower() for word in data]
-
-    # https://github.com/Alir3z4/stop-words/blob/master/english.txt
-    g = open("english.txt",'r')
+def preprocess_data(file_name):
+    file_inp = open(file_name, 'rb')
+    out_list = []
+    g = open("english.txt", 'r')
     stopWords = g.read().split('\n')
-    data = ' '.join([word for word in data if word not in stopWords])
-
-    char_Remove = "[!@#$).\_%^&*()#@|-](){}+\n:<>?;,='"
-    char_Remove1 = '"'
-    data =  data.translate(None, char_Remove)
-    data =  data.translate(None, char_Remove1)
-    data =  data.translate(None,digits)
-
-    # Remove url links
-    # data = re.sub(r'http\S+', '', data)
-
-    data = data.split()
-    data = data[1:]
-
-    return data
-
+    for i in file_inp.readlines():
+        y = re.findall(
+            r"(?:\s|^)([>\[,.!?]*[A-Za-z_\*\"\'-]+[,.!?\]]*)(?=\s|$)",
+            i.rstrip())
+        x = re.findall(r"(?:\s|^)([A-Za-z_\*\"\'-]+[,.!?]+[A-Za-z_\*\"\'-]+)("
+                       r"?=\s|$)", i.rstrip())
+        for k in x:
+            y.extend(re.split("[,.!?]+", k))
+        # y = list(set(y))
+        y = [''.join(e.lower() for e in j if e.isalnum()) for j in y]
+        y = filter(None, y)
+        y = [a for a in y if a not in stopWords]
+        out_list.extend(y)
+    return out_list
 
 
 def main():
@@ -77,8 +56,8 @@ def main():
                 for filename in os.listdir(current_dir_path):
                     file_path = os.path.join(current_dir_path, filename)
                     file_fd = open(file_path, 'r')
-                    # words = preprocess_data(file_path)
-                    words = file_fd.read(-1).split()
+                    words = preprocess_data(file_path)
+                    # words = file_fd.read(-1).split()
                     for word in words:
                         total_words_in_topic += 1
                         # if word not in topic_word_dict[topic]:
@@ -130,8 +109,8 @@ def main():
                     file_path = os.path.join(current_dir_path, filename)
                     # print filename
                     file_fd = open(file_path, 'r')
-                    # words = preprocess_data(file_path)
-                    words = file_fd.read(-1).split()
+                    words = preprocess_data(file_path)
+                    # words = file_fd.read(-1).split()
                     for word in words:
                         for topic in topic_word_dict:
                             if word in topic_word_dict[topic]:
@@ -139,7 +118,8 @@ def main():
                                     total_for_topic_dict[topic] = 0
 
                                 total_for_topic_dict[topic] += math.log(topic_word_dict[topic][word])
-                    sorted_topics = sorted(total_for_topic_dict.items(), key=operator.itemgetter(1))
+                    sorted_topics = sorted(total_for_topic_dict.items(),
+                                           key=operator.itemgetter(1))
                     print(file_path, sorted_topics[0])
 
     else:
