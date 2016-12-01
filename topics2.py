@@ -4,6 +4,7 @@ import pickle
 import operator
 import re
 from string import digits
+import math
 
 
 temp = []
@@ -68,6 +69,7 @@ def main():
             current_dir_path = os.path.join(dataset_dir, dir_name)
             topic = dir_name
             total_words_in_topic = 0
+            doc_word_count_dict = dict()
             if topic not in topic_word_dict:
                 topic_word_dict[topic] = dict()
 
@@ -79,13 +81,23 @@ def main():
                     words = file_fd.read(-1).split()
                     for word in words:
                         total_words_in_topic += 1
-                        if word not in topic_word_dict[topic]:
-                            topic_word_dict[topic][word] = 0
-                        topic_word_dict[topic][word] += 1
+                        # if word not in topic_word_dict[topic]:
+                        #     topic_word_dict[topic][word] = 1
+                        if word not in doc_word_count_dict:
+                            doc_word_count_dict[word] = dict()
+                        doc_name = dir_name+"_"+filename
+                        if doc_name not in doc_word_count_dict[word]:
+                            doc_word_count_dict[word][doc_name] = 1
+                        # topic_word_dict[topic][word] += 1
 
             # Process probability
-            for word in topic_word_dict[topic]:
-                topic_word_dict[topic][word] = float(topic_word_dict[topic][word])/total_words_in_topic
+            # for word in topic_word_dict[topic]:
+            #     topic_word_dict[topic][word] = float(topic_word_dict[topic][word])/total_words_in_topic
+
+            # Probability based on number of documents had a word to number of documents in the topic
+                total_documents = len(os.listdir(current_dir_path))
+                for word in doc_word_count_dict:
+                    topic_word_dict[topic][word] = float(len(doc_word_count_dict[word]))/total_documents
 
         dis_fd = open(distinctive_words_file, 'w')
         for topic in topic_word_dict:
@@ -124,10 +136,10 @@ def main():
                         for topic in topic_word_dict:
                             if word in topic_word_dict[topic]:
                                 if topic not in total_for_topic_dict:
-                                    total_for_topic_dict[topic] = topic_word_dict[topic][word]
-                                else:
-                                    total_for_topic_dict[topic] *= topic_word_dict[topic][word]
-                    sorted_topics = sorted(total_for_topic_dict.items(), key=operator.itemgetter(1), reverse=True)
+                                    total_for_topic_dict[topic] = 0
+
+                                total_for_topic_dict[topic] += math.log(topic_word_dict[topic][word])
+                    sorted_topics = sorted(total_for_topic_dict.items(), key=operator.itemgetter(1))
                     print(file_path, sorted_topics[0])
 
     else:
