@@ -8,6 +8,34 @@ import math
 
 
 temp = []
+topics_list = ['religion', 'christian', 'mideast', 'pc', 'windows',
+               'medical', 'space', 'crypto', 'xwindows', 'atheism',
+               'autos', 'mac', 'baseball', 'hockey', 'graphics',
+               'politics', 'electronics', 'forsale', 'guns', 'motorcycles']
+
+
+def display_accuracy(result):
+    print "v (Actual / Predicted) >"
+    print "\t" + "\t".join(i[0:2] for i in topics_list)
+    tn_tp = sum([result[j][j] for j in range(0, len(topics_list))])
+    total = sum([sum(result[j]) for j in range(0, len(topics_list))])
+    for i in topics_list:
+        print i[0:2], "\t", "\t".join(str(i) for i in result[
+            topics_list.index(i)]), "\t", sum(result[topics_list.index(i)])
+    print " --- "
+    print " Accuracy: ", tn_tp * 100.00 / total * 1.00
+
+
+def accuracy(computed_list):
+    N = len(topics_list)
+    confusion_matrix = [[0 for i in range(0, N)] for i in range(0, N)]
+    for compute in computed_list:
+        actual_value = compute[0]
+        predic_value = compute[1]
+        actual_index = topics_list.index(actual_value)
+        predic_index = topics_list.index(predic_value)
+        confusion_matrix[actual_index][predic_index] += 1
+    return confusion_matrix
 
 
 def preprocess_data(file_name):
