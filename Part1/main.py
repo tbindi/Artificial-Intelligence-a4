@@ -26,7 +26,7 @@ if __name__ == "__main__":
     picklepath = 'pickledata/'
     if mode == "train":
         if technique == "bayes":
-            loadData_continous.loadData_main(datapath,picklepath) #working fine
+            loadData_continous.loadData_main(datapath,picklepath)
             loadData_binary.loadData_binary_main(datapath,picklepath)
             NB_word_prob.NB_word_main()
         else:
@@ -40,15 +40,15 @@ if __name__ == "__main__":
 
     elif mode == "test":
         if technique == "bayes":
-            classifyNB_continous.NBcontinous_main(datapath,picklepath) #working fine
+            classifyNB_continous.NBcontinous_main(datapath,picklepath)
             classifyNB_binary.NBbinary_main(datapath,picklepath)
 
         else:
-            #creates test data
+            # creates test data
             DT_continous_data.DT_continous_main(datapath, mode)
             DT_binary_data.DT_binary_main(datapath, mode)
 
             #creates tree to classify test data
-            binaryDT.learn_bagged_binary(5, 1, picklepath)
-            binaryDT.learn_bagged_continous(5, 1, picklepath)
+            binaryDT.learn_bagged_binary(5, 1, picklepath,"binary")
+            binaryDT.learn_bagged_continous(5, 1, picklepath,"DT")
 

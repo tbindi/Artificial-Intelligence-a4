@@ -28,7 +28,7 @@ class DNode:
 
 #Main fucntion
 #Computes best information gain by iterating through all the features. Split data on the best info gain and creates tree nodes.
-def calculate(data,userdepth,depth):
+def calculate(data,userdepth,depth,tag):
     label_index = getLabel()
     # print data
     #If the data is null return new node
@@ -59,7 +59,7 @@ def calculate(data,userdepth,depth):
                 # print "bgain in calculate",bgain
                 # print "bgain in calculate for feature,dtapoint", (bgain, bfeature, bvalue)
                 # print "infogain in calculate for datapoint and feature",(infogain,uniquedatapoint,feature)
-                infogain, dleft, dright = splitdata(entrootdata, data, feature, uniquedatapoint)
+                infogain, dleft, dright = splitdata(entrootdata, data, feature, uniquedatapoint,tag)
                 # if feature == bfeature and uniquedatapoint == bvalue:
                 #
                 # print "infogain in calculate and dleft,dright", (infogain, dleft, dright)
@@ -75,9 +75,9 @@ def calculate(data,userdepth,depth):
                 # raw_input()
         if bgain>0 and len(bdleft)>0 and len(bdright)>0:
             # print "In if bgain>0 and len(dleft)>0 or len(dright)>0 in calculate"
-            DNleft = calculate(bdleft,userdepth,depth+1)
+            DNleft = calculate(bdleft,userdepth,depth+1,tag)
             # print "DNleft" ,DNleft
-            DNright = calculate(bdright,userdepth,depth+1)
+            DNright = calculate(bdright,userdepth,depth+1,tag)
             return DNode(feature=bfeature,value=bvalue,left=DNleft,right=DNright)
 
     return DNode(result = results(data,label_index))
@@ -160,7 +160,7 @@ def cal_infogain(entparentdata,eright,eleft,lendleft,lendright):
     return infogain
 
 
-def splitdata(entrootdata,data,feature,uniquedatapoint):
+def splitdata(entrootdata,data,feature,uniquedatapoint,tag):
     # print "feature of split data", feature
     # print "Unique datapoint in splitdata",uniquedatapoint
     dleft =[]
@@ -168,11 +168,18 @@ def splitdata(entrootdata,data,feature,uniquedatapoint):
 
 
     for i in data:
-        if i[feature] == uniquedatapoint:
-            # print i[feature]
-            dleft.append(i)
+        if tag == "binary":
+            if i[feature] == uniquedatapoint:
+                # print i[feature]
+                dleft.append(i)
+            else:
+                dright.append(i)
         else:
-            dright.append(i)
+            if i[feature] >= uniquedatapoint:
+                # print i[feature]
+                dleft.append(i)
+            else:
+                dright.append(i)
     # print "dleft in splitdata",dleft
     # print "dright in splitdata",dright
     if len(dright)>0:
@@ -335,7 +342,7 @@ def calculate_bootstrap_accu(b,testdata):
 
 
 
-def learn_bagged_binary(tdepth, nummbags, datapath):
+def learn_bagged_binary(tdepth, nummbags, datapath,tag):
     solution =[]
     data_train = []
     data_test = []
@@ -373,7 +380,7 @@ def learn_bagged_binary(tdepth, nummbags, datapath):
         temp = 0
         bootstrapdata[:] = []
         bootstrapdata = [random.choice(traindata) for _ in range(0,sample_size)]
-        tree = calculate(bootstrapdata,tdepth,0)
+        tree = calculate(bootstrapdata,tdepth,0,tag)
         print "Decision Tree binary ---------------------------------------------------"
         printtree(tree,header)
         for datapoint in testdata:
@@ -403,7 +410,7 @@ def learn_bagged_binary(tdepth, nummbags, datapath):
     print "------------------------------------------------------------------------"
     # print "/n"
 
-def learn_bagged_continous(tdepth, nummbags, datapath):
+def learn_bagged_continous(tdepth, nummbags, datapath,tag):
     solution = []
     data_train = []
     data_test = []
@@ -441,7 +448,7 @@ def learn_bagged_continous(tdepth, nummbags, datapath):
         temp = 0
         bootstrapdata[:] = []
         bootstrapdata = [random.choice(traindata) for _ in range(0, sample_size)]
-        tree = calculate(bootstrapdata, tdepth, 0)
+        tree = calculate(bootstrapdata, tdepth, 0,tag)
         print "Decision Tree continous ---------------------------------------------------"
         printtree(tree, header)
         for datapoint in testdata:
