@@ -27,7 +27,7 @@ def preprocess_data(i):
     data = [word.lower() for word in data]
 
     # https://github.com/Alir3z4/stop-words/blob/master/english.txt
-    g = open("C:/Users/Mohit/PycharmProjects/SpamDetection/part1/english.txt",'r')
+    g = open("english.txt",'r')
     stopWords = g.read().split('\n')
     data = ' '.join([word for word in data if word not in stopWords])
 

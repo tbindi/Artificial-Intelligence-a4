@@ -374,6 +374,7 @@ def learn_bagged_binary(tdepth, nummbags, datapath):
         bootstrapdata[:] = []
         bootstrapdata = [random.choice(traindata) for _ in range(0,sample_size)]
         tree = calculate(bootstrapdata,tdepth,0)
+        print "Decision Tree binary ---------------------------------------------------"
         printtree(tree,header)
         for datapoint in testdata:
             temp = classify(tree,datapoint)
@@ -397,10 +398,10 @@ def learn_bagged_binary(tdepth, nummbags, datapath):
         # print "Accuracy : ", accuracy
     # print "Depth : %s | Bags : %s " %(tdepth,nummbags)
     print ""
-    print "Decision Tree binary ---------------------------------------------------"
+
     calculate_bootstrap_accu(b,testdata)
     print "------------------------------------------------------------------------"
-    print "/n"
+    # print "/n"
 
 def learn_bagged_continous(tdepth, nummbags, datapath):
     solution = []
@@ -441,6 +442,7 @@ def learn_bagged_continous(tdepth, nummbags, datapath):
         bootstrapdata[:] = []
         bootstrapdata = [random.choice(traindata) for _ in range(0, sample_size)]
         tree = calculate(bootstrapdata, tdepth, 0)
+        print "Decision Tree continous ---------------------------------------------------"
         printtree(tree, header)
         for datapoint in testdata:
             temp = classify(tree, datapoint)
@@ -464,7 +466,7 @@ def learn_bagged_continous(tdepth, nummbags, datapath):
         # print "Accuracy : ", accuracy
     # print "Depth : %s | Bags : %s " % (tdepth, nummbags)
     print ""
-    print "Decision Tree continous ---------------------------------------------------"
+
     calculate_bootstrap_accu(b, testdata)
     print "---------------------------------------------------------------------------"
     # print "/n"

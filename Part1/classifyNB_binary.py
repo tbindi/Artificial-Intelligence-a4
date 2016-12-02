@@ -43,7 +43,7 @@ def compute_confmatrix(tagged_docs):
     return confmatrix
 
 def NBbinary_main(datapath,picklepath):
-    with open('pickledata/binary_dict10k_sf1.pickle') as f:
+    with open('pickledata/binary_dict5k_sf.pickle') as f:
         binary_dict1 = pickle.load(f)
 
     binary_dict = binary_dict1.transpose()

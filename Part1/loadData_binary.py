@@ -31,7 +31,7 @@ def loadData_binary_main(datapath, pickldata):
     # print main_word_list
     # raw_input()
     sorted_main_word_list = sorted(sorted(main_word_list), key=main_word_list.get, reverse=True)
-    sorted_main_word_list_reduced = sorted_main_word_list[:50]
+    sorted_main_word_list_reduced = sorted_main_word_list[:5000]
 
     # print sorted_main_word_list_reduced
 
@@ -62,7 +62,7 @@ def loadData_binary_main(datapath, pickldata):
 
     # print data_dict1
 
-    with open('pickledata/binary_dict50_sf.pickle', 'w') as f:  # Python 3: open(..., 'wb')
+    with open('pickledata/binary_dict5k_sf.pickle', 'w') as f:  # Python 3: open(..., 'wb')
         pickle.dump(data_dict1, f)
 
         # with open('binary_spamdict.pickle', 'w') as f:  # Python 3: open(..., 'wb')

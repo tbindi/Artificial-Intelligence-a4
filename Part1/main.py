@@ -6,30 +6,33 @@ import loadData_binary
 import loadData_continous
 import DT_continous_data
 import DT_binary_data
+import NB_word_prob
 
 
 if __name__ == "__main__":
     # Get the mode - train or test
-    # mode = sys.argv[0];
-    mode = "test"
+    mode = sys.argv[1];
+    # mode = "test"
     # Get the technique - bayes or decision tree
-    # technique = sys.argv[1];
-    technique = "DT"
+    technique = sys.argv[2];
+    # technique = "DT"
     # Get the datapath - test and train
-    # datapath = sys.argv[2];
-    datapath = "part1/test"
+    datapath = sys.argv[3];
+    # datapath = "part1/test"
     # Get the model
-    # model = sys.argv[3];
-    model = "model"
+    model = sys.argv[4];
+    # model = "model"
     # Store all the pickle in this directory
     picklepath = 'pickledata/'
     if mode == "train":
         if technique == "bayes":
             loadData_continous.loadData_main(datapath,picklepath) #working fine
             loadData_binary.loadData_binary_main(datapath,picklepath)
+            NB_word_prob.NB_word_main()
         else:
             DT_continous_data.DT_continous_main(datapath,mode)
             DT_binary_data.DT_binary_main(datapath,mode)
+            #Print tree in the train mode but takes time to compute.
             # binaryDT.print_tree_new_(5, 1, "binary")
             # binaryDT.print_tree_new_(5, 1, "continous")
 
