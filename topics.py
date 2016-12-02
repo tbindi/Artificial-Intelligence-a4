@@ -4,9 +4,13 @@ import pickle
 import operator
 import re
 from string import digits
-
+import math
 
 temp = []
+topics_list = ['religion', 'christian', 'mideast', 'pc', 'windows',
+               'medical', 'space', 'crypto', 'xwindows', 'atheism',
+               'autos', 'mac', 'baseball', 'hockey', 'graphics',
+               'politics', 'electronics', 'forsale', 'guns', 'motorcycles']
 
 def cleanhtml(raw_html):
   cleanr = re.compile('<.*?>')
@@ -50,6 +54,28 @@ def preprocess_data(i):
     return data
 
 
+def display_accuracy(result):
+    print "v (Actual / Predicted) >"
+    print "\t" + "\t".join(i[0:2] for i in topics_list)
+    tn_tp = sum([result[j][j] for j in range(0, len(topics_list))])
+    total = sum([sum(result[j]) for j in range(0, len(topics_list))])
+    for i in topics_list:
+        print i[0:2], "\t", "\t".join(str(i) for i in result[
+            topics_list.index(i)]), "\t", sum(result[topics_list.index(i)])
+    print " --- "
+    print " Accuracy: ", tn_tp * 100.00 / total * 1.00
+
+
+def accuracy(computed_list):
+    N = len(topics_list)
+    confusion_matrix = [[0 for i in range(0, N)] for i in range(0, N)]
+    for compute in computed_list:
+        actual_value = compute[0]
+        predic_value = compute[1]
+        actual_index = topics_list.index(actual_value)
+        predic_index = topics_list.index(predic_value)
+        confusion_matrix[actual_index][predic_index] += 1
+    return confusion_matrix
 
 def main():
 
@@ -58,7 +84,7 @@ def main():
     model_file = sys.argv[3]
     fraction = float(sys.argv[4])
     distinctive_words_file = "distinctive words.txt"
-
+    final_result = []
     print("-----")
     topic_word_dict = {}
 
@@ -87,6 +113,7 @@ def main():
             for word in topic_word_dict[topic]:
                 topic_word_dict[topic][word] = float(topic_word_dict[topic][word])/total_words_in_topic
 
+
         dis_fd = open(distinctive_words_file, 'w')
         for topic in topic_word_dict:
             words_topic = topic_word_dict[topic]
@@ -109,6 +136,11 @@ def main():
         with open(model_file, 'rb') as f:
             topic_word_dict = pickle.load(f)
 
+        total_words = 0
+        for topic in topic_word_dict:
+            total_words += len(topic_word_dict[topic])
+        print("total_words:"+str(total_words))
+
         for dirname in os.listdir(dataset_dir):
             current_dir_path = os.path.join(dataset_dir, dirname)
 
@@ -124,12 +156,13 @@ def main():
                         for topic in topic_word_dict:
                             if word in topic_word_dict[topic]:
                                 if topic not in total_for_topic_dict:
-                                    total_for_topic_dict[topic] = topic_word_dict[topic][word]
+                                    total_for_topic_dict[topic] = math.log(topic_word_dict[topic][word])
                                 else:
-                                    total_for_topic_dict[topic] *= topic_word_dict[topic][word]
-                    sorted_topics = sorted(total_for_topic_dict.items(), key=operator.itemgetter(1), reverse=True)
-                    print(file_path, sorted_topics[0])
-
+                                    total_for_topic_dict[topic] += math.log(topic_word_dict[topic][word])
+                    sorted_topics = sorted(total_for_topic_dict.items(), key=operator.itemgetter(1))
+                    # print(file_path, sorted_topics[0])
+                    final_result.append((dirname, sorted_topics[0][0]))
+        display_accuracy(accuracy(final_result))
     else:
         print("Invalid Mode")
 if __name__ == '__main__':
