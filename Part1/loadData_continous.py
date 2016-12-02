@@ -1,3 +1,8 @@
+#Creates a dicionary of all the words and the number of times they occured in each label - spam or ham.
+#If a word occurred in a particular document, it's respective values is incremented by 1 in the dictionary. Every instance of the word is tracked.
+#Dictionary is stored in a pickle for future use.
+#Different pickles are saved for future references. All of them are explained at the end.
+
 import glob
 import preprocess
 import copy
@@ -61,17 +66,23 @@ def loadData_main(datapath,picklepath):
         word_dict[i] = [spam_count2, notspam_count2]
     # print word_dict
 
+    #Continous dictionary of all words and their count in the documents as spam or ham.
     with open('pickledata/word_spam_notspam_count_dict.pickle', 'w') as a:  # Python 3: open(..., 'wb')
         pickle.dump(word_dict, a)
 
+    #Stores the count of all the documents in train directory. Spam and ham.
     with open('pickledata/doc_count.pickle', 'w') as f:  # Python 3: open(..., 'wb')
         pickle.dump([notspam_count1,spam_count1], f)
 
+    #Stores a dictionary of all the unique words appearing in the whole train data set with their counts.
     with open('pickledata/main_word_list.pickle', 'w') as g:  # Python 3: open(..., 'wb')
         pickle.dump(main_word_list, g)
 
+
+    #Stores a dictionary of all the unique spam words appearing in the whole train data set with their counts.
     with open('pickledata/main_spam_word_list.pickle', 'w') as h:  # Python 3: open(..., 'wb')
         pickle.dump(main_spam_word_list, h)
 
+    #Stores a dictionary of all the unique notspam words appearing in the whole train data set with their counts.
     with open('pickledata/main_notspam_word_list.pickle', 'w') as i:  # Python 3: open(..., 'wb')
         pickle.dump(main_notspam_word_list, i)

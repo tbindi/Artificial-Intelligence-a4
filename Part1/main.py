@@ -1,3 +1,6 @@
+#Program stores model in the form of pickle in a directory - pickledata
+
+
 import sys
 import classifyNB_continous
 import classifyNB_binary

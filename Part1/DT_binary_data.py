@@ -1,3 +1,7 @@
+#Creates a csv file of containing a docs x words matrix. Documents are all the documents appearing in the train set with a label - spam 1 and ham 0.
+#Top 5000 words are taken for ease of processing. Every doc-word->cell has 1 if the word occured in the document otherwise 0. Every instance is not counted.
+
+
 import glob
 import preprocess
 from collections import defaultdict

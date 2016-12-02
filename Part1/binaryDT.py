@@ -1,5 +1,14 @@
+#Disclaimer:-
+#I wrote this code for an assignment in another course - Applied Machine Learning. I have just reused it here by making necessary changes.
+#All of this code is written by me only. I am just citing myself if that's a thing. :D
+
 # Author: Mohit Galvankar
 # Builds decision tree and classifies input data based on the tree generated
+# Creates a decision tree by iterating through the features in this case all the words. Calculates infogain for each value in the columns and based on
+# that creates a node in the decision tree and so on and so forth. Print tree to display how new data will be classified.
+
+#Calculates the confusion matrix and accuracy. Every function is described below.
+
 
 
 

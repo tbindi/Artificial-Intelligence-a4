@@ -1,3 +1,9 @@
+#Creates a dicionary of all the words and the number of times they occured in each label - spam or ham.
+#If a word occurred in a particular document, it's respective values is incremented by 1 in the dictionary. Every instance of the word is not tracked.
+#Dictionary is stored in a pickle for future use.
+
+
+
 import glob
 import preprocess
 import copy
