@@ -130,22 +130,23 @@ def preprocess_topic_word(doc_dict):
 
     return topic_word_dict
 
-# def retrain(doc_dict):
-#     topic_word_dict = preprocess_topic_word()
-#     total_log = ""
-#     for doc_name in doc_dict:
-#
-#         for topic in topic_word_dict:
-#
-#             topic_word_dict[topic]
-#             if not doc_dict[doc_name]['LABELLED']:
-#
-#                 for word in doc_dict[doc_name]:
-#                     total_log += math.log(doc_dict[doc_name][word])
-#
-#                 doc_dict[doc_name]
-#
-#             for word in doc_dict[doc_name]['WORDS']:
+def retrain(doc_dict):
+    topic_word_dict = preprocess_topic_word()
+    total_log = ""
+    for doc_name in doc_dict:
+
+        if not doc_dict[doc_name]['LABELLED']:
+            topic_sel = dict()
+            for topic in topic_word_dict:
+
+                if topic not in topic_sel:
+                    topic_sel[topic] = 0
+                for word in doc_dict[doc_name]:
+                    topic_sel[topic] += math.log(topic_word_dict[topic][word])
+                if topic in doc_dict[doc_name]['TOPICS']:
+                    topic_sel[topic] += math.log(doc_dict[doc_name]['TOPICS'][topic])
+
+
 
 
 def label_docs(doc_dict, topic_word_dict):
@@ -160,9 +161,9 @@ def label_docs(doc_dict, topic_word_dict):
             for word in doc_dict[doc_name]['WORDS']:
 
                 if word in topic_word_dict[topic]:
-                    prob_topic_dict[topic] += math.log(float(doc_dict[doc_name]['WORDS'][word])/ doc_dict[doc_name]['TOTAL_WORDS']/topic_word_dict[topic][word])
+                    prob_topic_dict[topic] += math.log(float(doc_dict[doc_name]['WORDS'][word])/doc_dict[doc_name]['TOTAL_WORDS']/topic_word_dict[topic][word])
                 else:
-                    prob_topic_dict[topic] += math.log(float(doc_dict[doc_name]['WORDS'][word]) / doc_dict[doc_name]['TOTAL_WORDS']/float(random.randint(1,10))/10.0)
+                    prob_topic_dict[topic] += math.log(float(doc_dict[doc_name]['WORDS'][word])/doc_dict[doc_name]['TOTAL_WORDS']/float(random.randint(1,10))/10.0)
 
         sorted_topics = sorted(prob_topic_dict.items(), key=operator.itemgetter(1), reverse=True)
         final_result.append((doc_name.split("_")[0], sorted_topics[0][0]))
