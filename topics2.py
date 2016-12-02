@@ -125,9 +125,9 @@ def preprocess_topic_word(doc_dict):
 
         topic_word_dict[topic_name]['TOTAL_WORDS'] += total_words
 
-    for topic_name in topic_word_dict:
-        for word in topic_word_dict[topic_name]:
-            topic_word_dict[topic_name][word] = float(topic_word_dict[topic_name][word])/topic_word_dict[topic_name]['TOTAL_WORDS']
+    # for topic_name in topic_word_dict:
+    #     for word in topic_word_dict[topic_name]:
+    #         topic_word_dict[topic_name][word] = float(topic_word_dict[topic_name][word])/topic_word_dict[topic_name]['TOTAL_WORDS']
         # del topic_word_dict[topic_name]['TOTAL_WORDS']
 
     return topic_word_dict
@@ -194,15 +194,17 @@ def label_docs(doc_dict, topic_word_dict):
                 prob_topic_dict[topic] = 0
 
             for word in doc_dict[doc_name]['WORDS']:
-
+                # prob_topic_dict[topic] += math.log()
                 if word in topic_word_dict[topic]:
-                    prob_topic_dict[topic] += math.log(topic_word_dict[topic][word])
+                    prob_topic_dict[topic] += math.log((topic_word_dict[topic][word]+1.0)/(topic_word_dict[topic]['TOTAL_WORDS']+len(topic_word_dict[topic])))
+                else:
+                    prob_topic_dict[topic] += math.log(1.0/(topic_word_dict[topic]['TOTAL_WORDS']+len(topic_word_dict[topic])))
                     # prob_topic_dict[topic] += topic_word_dict[topic][word]
                     # prob_topic_dict[topic] += math.log((float(doc_dict[doc_name]['WORDS'][word])/doc_dict[doc_name]['TOTAL_WORDS'])*topic_word_dict[topic][word])
                 # else:
                 #     prob_topic_dict[topic] += math.log((float(doc_dict[doc_name]['WORDS'][word])/doc_dict[doc_name]['TOTAL_WORDS'])*float(random.randint(1,10))/1.0)
 
-        sorted_topics = sorted(prob_topic_dict.items(), key=operator.itemgetter(1))
+        sorted_topics = sorted(prob_topic_dict.items(), key=operator.itemgetter(1), reverse=True)
         final_result.append((doc_name.split("_")[0], sorted_topics[0][0]))
     return final_result
 
