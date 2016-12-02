@@ -3,7 +3,7 @@
 # occurs, calculating probabilty as number of times the word occured in spam
 # documents divided by the total number of words in spam documents and also
 # multipled by the prior probability of spam of not spam documents.
-# Assigning the tag of spam or ham to max of the probabilites calculated.
+# Assigning the tag of spam or ham to max of the probabilites calculated
 
 import preprocess
 import glob
