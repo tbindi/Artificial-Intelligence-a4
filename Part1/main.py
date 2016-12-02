@@ -52,6 +52,7 @@ if __name__ == "__main__":
             DT_binary_data.DT_binary_main(datapath, mode)
 
             #creates tree to classify test data
+            #Parametes passed are tree depth, number of bags - bagging, mode - binary or continous
             binaryDT.learn_bagged_binary(5, 1, picklepath,"binary")
             binaryDT.learn_bagged_continous(5, 1, picklepath,"DT")
 
