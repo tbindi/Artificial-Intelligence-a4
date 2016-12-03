@@ -69,12 +69,16 @@ def init_doc_dict():
 
 def load_train_data(dataset_dir, fraction):
     doc_dict = dict()
-    total_words_topic = dict()
+    topic_doc_dict = dict()
     for dir_name in os.listdir(dataset_dir):
         current_dir_path = os.path.join(dataset_dir, dir_name)
         topic_name = dir_name
         if os.path.isdir(current_dir_path):
-            for filename in os.listdir(current_dir_path):
+            files = os.listdir(current_dir_path)
+            if topic_name not in topic_doc_dict:
+                topic_doc_dict[topic_name] = 0
+            topic_doc_dict[topic_name] = len(files)
+            for filename in files:
                 file_path = os.path.join(current_dir_path, filename)
                 file_fd = open(file_path, 'r')
                 # words = preprocess_data(file_path)
@@ -84,9 +88,6 @@ def load_train_data(dataset_dir, fraction):
                     doc_dict[doc_name] = init_doc_dict()
                 else:
                     print("DOC exists"+doc_name)
-                if topic_name not in total_words_topic:
-                    total_words_topic[topic_name] = 0
-                total_words_topic[topic_name] += len(words)
                 for word in words:
                     # print(doc_dict[doc_name])
                     if word not in doc_dict[doc_name]['WORDS']:
@@ -100,7 +101,7 @@ def load_train_data(dataset_dir, fraction):
                     #     doc_dict[doc_name]['TOPICS'][topic_name] = 1.0
                     #     doc_dict[doc_name]['LABELLED'] = True
                     #     doc_dict[doc_name]['LABEL'] = topic_name
-    return doc_dict, total_words_topic
+    return doc_dict, topic_doc_dict
 
 
 def preprocess_topic_word(doc_dict):
@@ -176,16 +177,16 @@ def retrain(doc_dict):
                     topic_sel[topic] += math.log(doc_dict[doc_name]['TOPICS'][topic])
 
 
-def label_docs(doc_dict, topic_word_dict, total_words_topic):
+def label_docs(doc_dict, topic_word_dict, topic_doc_dict):
 
     final_result = []
-    total = sum([total_words_topic[i] for i in total_words_topic])
+    total = sum([topic_doc_dict[i] for i in topic_doc_dict])
     for doc_name in doc_dict:
         prob_topic_dict = dict()
         for topic in topic_word_dict:
             if topic not in prob_topic_dict:
                 prob_topic_dict[topic] = 0
-            prob_topic_dict[topic] += math.log(float(total_words_topic[
+            prob_topic_dict[topic] += math.log(float(topic_doc_dict[
                                                          topic])/ total)
             for word in doc_dict[doc_name]['WORDS']:
                 if word in topic_word_dict[topic]:
@@ -215,7 +216,7 @@ def main():
     print("-----")
 
     if mode == "train":
-        doc_dict, total_words_topic = load_train_data(dataset_dir, fraction)
+        doc_dict, topic_doc_dict = load_train_data(dataset_dir, fraction)
         topic_word_dict = preprocess_topic_word(doc_dict)
         # topic_word_dict = build_topic_word_dict_from_dir(dataset_dir)
 
@@ -250,13 +251,13 @@ def main():
 
         # Store the model
         with open(model_file, 'wb') as f:
-            pickle.dump((topic_word_dict, total_words_topic), f,
+            pickle.dump((topic_word_dict, topic_doc_dict), f,
                         pickle.HIGHEST_PROTOCOL)
 
     elif mode == "test":
 
         with open(model_file, 'rb') as f:
-            topic_word_dict, total_words_topic = pickle.load(f)
+            topic_word_dict, topic_doc_dict = pickle.load(f)
 
         # total_words = 0
         # for topic in topic_word_dict:
@@ -265,7 +266,7 @@ def main():
         # print("total_words:" + str(total_words))
 
         doc_dict, test_word_dict = load_train_data(dataset_dir, fraction)
-        out_data = label_docs(doc_dict, topic_word_dict, total_words_topic)
+        out_data = label_docs(doc_dict, topic_word_dict, topic_doc_dict)
         # print out_data
         display_accuracy(accuracy(out_data))
         # print(out_data)
