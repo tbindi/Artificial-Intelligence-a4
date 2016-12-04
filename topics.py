@@ -1,3 +1,41 @@
+"""
+
+Important Data structures:
+
+1. doc_dict: This holds every document's information such as num of occurances of each word in the document,
+    total number of words, probability of the document belonging to a particular topic, the topic label and whether
+    this document is currently labelled or not depending on the fraction amount given.
+
+2. topic_word_dict: This gets populated from doc_dict in preprocess_topic_word function and it contains the
+    probability of word conditional topic for each word in the topics. This is selectively populated based on the
+    fraction amount given.
+
+3. topic_doc_dict: This contains number of documents in each topic which is used in the naive bayes calculation.
+
+
+Training:
+If fraction is 1.0(Fully supervised): Every document that is read is labelled and no retaining happens.
+
+If fraction is between 0.1 and 0.9(Semi supervised): The fraction amount of Documents are labelled and loaded into topic_word_dict,
+and retrain() is called 5 times to retrain the unlabelled documents so that we start labelling the unlabelled. Finally,
+the topic_word_dict is loaded.
+
+If fraction is 0.0(Un-supervised): 10% of the documents are randomly classified into some topic and retrain is ran over
+the unlabelled so that everything is labelled into some topic.
+
+Testing:
+Model file is read to get topic_word_dict and topic_doc_dict information of the training data. Testing data is loaded
+into doc_dict and probability is calculated for each word in the document for each topic and the topic which gives
+the max prob is chosen.
+
+Normalized Formula used:
+prob_topic_dict[topic] += math.log((topic_word_dict[topic][word]+1.0)/(topic_word_dict[topic]['TOTAL_WORDS']+len(topic_word_dict[topic])))
+
+
+Model file: topic_word_dict and topic_doc_dict is stored in the model file.(model.txt)
+
+Also, writes distinctive_words.txt for the top 10 words in each topic.
+"""
 import sys
 import os
 import pickle
